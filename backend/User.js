@@ -1,3 +1,16 @@
+/**
+ * User Model
+ * 
+ * Represents a user in the National Exam Preparation System.
+ * Users can have different roles: Student, Teacher, School Admin, or Regional Admin.
+ * 
+ * Role-specific fields:
+ * - Student: Requires scienceStream and grade
+ * - Teacher: Requires subjects, experience, and about fields
+ * - School Admin: Administrative privileges for a specific school
+ * - Regional Admin: Highest level of administrative privileges
+ */
+
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
