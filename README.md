@@ -3,6 +3,7 @@
 A comprehensive platform for Ethiopian students to prepare for national examinations with adaptive learning technology and teacher management features.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Features](#features)
 - [Architecture](#architecture)
@@ -23,6 +24,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 ## Features
 
 ### Student Features
+
 - User registration and authentication
 - Practice tests with adaptive difficulty
 - Personalized study plans based on weak areas
@@ -30,6 +32,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 - Leaderboards to encourage healthy competition
 
 ### Teacher Features
+
 - Create and manage educational content (questions)
 - Create and manage classes
 - Add/remove students from classes
@@ -38,6 +41,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 - Create assignments and learning materials
 
 ### Administrative Features
+
 - User management
 - School administration
 - System-wide analytics
@@ -46,6 +50,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 ## Architecture
 
 ### Frontend
+
 - React with Vite
 - Tailwind CSS for styling
 - React Router for navigation
@@ -53,6 +58,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 - Responsive design for all devices
 
 ### Backend
+
 - Node.js with Express
 - MongoDB with Mongoose ODM
 - JWT-based authentication
@@ -60,6 +66,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 - Role-based authorization
 
 ### Models
+
 - **User**: Student, Teacher, School Admin, Regional Admin roles
 - **Question**: Educational content with metadata
 - **TestAttempt**: Student performance tracking
@@ -70,6 +77,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 ## Installation
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - MongoDB (running locally or cloud instance)
 - npm or yarn
@@ -77,12 +85,14 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/national-exam.git
 cd national-exam
 ```
 
 2. Install dependencies:
+
 ```bash
 # Backend
 cd backend
@@ -96,6 +106,7 @@ npm install
 3. Set up environment variables:
 
 In the `backend/` directory, create a `.env` file with:
+
 ```
 MONGODB_URI=mongodb://localhost:27017/national_exam
 JWT_SECRET=your_jwt_secret_key_here
@@ -103,6 +114,7 @@ FRONTEND_URL=http://localhost:8080
 ```
 
 4. Start the applications:
+
 ```bash
 # Terminal 1: Start the backend server
 cd backend
@@ -119,6 +131,7 @@ The Vite proxy will forward API requests from the frontend to the backend.
 ## Usage
 
 ### For Students
+
 1. Register as a student
 2. Select your grade and science stream (for grades 11-12)
 3. Take practice tests to improve your abilities
@@ -126,6 +139,7 @@ The Vite proxy will forward API requests from the frontend to the backend.
 5. Track your progress on the dashboard
 
 ### For Teachers
+
 1. Register as a teacher
 2. Create classes and add students
 3. Create questions for your subjects
@@ -137,24 +151,28 @@ The Vite proxy will forward API requests from the frontend to the backend.
 Teachers have access to a comprehensive suite of tools to manage their educational activities:
 
 ### Question Management
+
 - Create new questions with detailed metadata (subject, grade, topic, competency)
 - Edit existing questions
 - Delete questions as needed
 - Filter and search through question banks
 
 ### Class Management
+
 - Create new classes with specific subjects and grades
 - Add students to classes
 - Remove students from classes
 - View class rosters and student information
 
 ### Analytics Dashboard
+
 - View class performance metrics
 - Track individual student progress
 - Identify common weaknesses across classes
 - Generate reports for administrative purposes
 
 ### Content Creation
+
 - Develop subject-specific questions
 - Set difficulty levels and competencies
 - Provide explanations for correct answers
@@ -163,11 +181,13 @@ Teachers have access to a comprehensive suite of tools to manage their education
 ## API Documentation
 
 ### Authentication
+
 - `POST /api/users/register` - Register a new user
 - `POST /api/auth/login` - Authenticate user login
 - `PUT /api/users/update-phone` - Update phone number with verification
 
 ### Questions
+
 - `GET /api/questions` - Retrieve questions with filtering
 - `POST /api/questions` - Create a new question (Teacher only)
 - `GET /api/questions/:id` - Get a specific question
@@ -175,6 +195,7 @@ Teachers have access to a comprehensive suite of tools to manage their education
 - `DELETE /api/questions/:id` - Delete a question (Creator or Admin)
 
 ### Classes
+
 - `GET /api/classes` - Retrieve classes (scoped by user role)
 - `POST /api/classes` - Create a new class (Teacher only)
 - `GET /api/classes/:id` - Get a specific class
@@ -184,6 +205,7 @@ Teachers have access to a comprehensive suite of tools to manage their education
 - `PUT /api/classes/:id/remove-student` - Remove student from class
 
 ### Analytics
+
 - `GET /api/analytics/class-performance` - Get class performance data
 - `GET /api/analytics/student-performance/:studentId` - Get specific student analytics
 - `GET /api/analytics/study-plan` - Get student's study plan analysis
@@ -191,9 +213,11 @@ Teachers have access to a comprehensive suite of tools to manage their education
 ## Frontend Documentation
 
 ### Overview
+
 The frontend provides a responsive user interface for students, teachers, and administrators to interact with the exam preparation platform. It features a modern UI with role-based access to different functionalities.
 
 ### Tech Stack
+
 - React 18
 - Vite (build tool)
 - Tailwind CSS (styling)
@@ -203,6 +227,7 @@ The frontend provides a responsive user interface for students, teachers, and ad
 - TanStack Query (state management)
 
 ### Project Structure
+
 ```
 src/
 ├── components/     # Reusable UI components
@@ -215,11 +240,13 @@ src/
 ```
 
 ### Components
+
 - **DashboardLayout**: Consistent layout for authenticated users
 - **StatCard**: Display key metrics in dashboard views
 - **Navbar**: Navigation bar with role-based options
 
 ### Pages
+
 - **Landing**: Homepage for unauthenticated users
 - **Login/Register**: Authentication flows
 - **Dashboard**: Student dashboard
@@ -230,20 +257,25 @@ src/
 - **Teacher-specific pages** for question/class management
 
 ### API Integration
+
 The frontend communicates with the backend API through the functions defined in `api.js`. All API calls include proper authentication headers when required.
 
 ### Styling
+
 The application uses Tailwind CSS for styling with a consistent design system. Component styling follows the design system established in the shadcn/ui library.
 
 ### Environment Variables
+
 - `VITE_API_URL`: Base URL for the backend API
 
 ## Backend Documentation
 
 ### Overview
+
 The backend provides a RESTful API for the National Exam Preparation System, handling user authentication, question management, class management, and analytics.
 
 ### Tech Stack
+
 - Node.js
 - Express.js
 - MongoDB
@@ -253,6 +285,7 @@ The backend provides a RESTful API for the National Exam Preparation System, han
 - Express Validator
 
 ### Models
+
 - **User**: Student, Teacher, School Admin, Regional Admin roles
 - **Question**: Educational content with metadata
 - **TestAttempt**: Student performance tracking
@@ -261,6 +294,7 @@ The backend provides a RESTful API for the National Exam Preparation System, han
 - **AuditLog**: System activity tracking
 
 ### Controllers
+
 - **authController**: Handle user authentication
 - **userController**: Manage user operations
 - **questionController**: Handle question management
@@ -269,10 +303,12 @@ The backend provides a RESTful API for the National Exam Preparation System, han
 - **testController**: Handle test operations
 
 ### Middleware
+
 - **authMiddleware**: Verify JWT tokens
 - **authorize**: Check user roles for specific operations
 
 ### Environment Variables
+
 - `JWT_SECRET`: Secret for JWT signing
 - `MONGODB_URI`: Connection string for MongoDB
 - `PORT`: Port for the server to listen on
@@ -280,6 +316,7 @@ The backend provides a RESTful API for the National Exam Preparation System, han
 ## Technologies Used
 
 ### Frontend
+
 - React 18
 - Vite
 - Tailwind CSS
@@ -289,6 +326,7 @@ The backend provides a RESTful API for the National Exam Preparation System, han
 - TanStack Query
 
 ### Backend
+
 - Node.js
 - Express.js
 - MongoDB
@@ -298,6 +336,7 @@ The backend provides a RESTful API for the National Exam Preparation System, han
 - Express Validator
 
 ### Development Tools
+
 - ESLint
 - Vitest
 - Husky (for git hooks)
