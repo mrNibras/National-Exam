@@ -61,7 +61,8 @@ exports.registerUser = async (req, res) => {
         return res.status(400).json({ msg: 'Grade is required for students' });
       }
     } else if (finalRole === 'Teacher') {
-      if (!finalSchool || !finalSchool.name) {
+      // For teachers, we need either finalSchool (from invitation) or school (direct registration)
+      if (!finalSchool && !school) {
         return res.status(400).json({ msg: 'School information is required for teachers' });
       }
       if (!finalSubjects || finalSubjects.length === 0) {
@@ -75,24 +76,23 @@ exports.registerUser = async (req, res) => {
       }
     }
 
-    // If school is provided as a string (school name) and not as an ObjectId, create the school first
-    let schoolId;
-    if (typeof (finalSchool || school) === 'string') {
-      // Check if school already exists
-      let schoolDoc = await School.findOne({ name: finalSchool || school });
+    // Handle school creation if it doesn't exist and is provided as a string
+    let schoolToUse = finalSchool || school;
+    
+    // If schoolToUse is a string (school name), find or create the school
+    if (typeof schoolToUse === 'string') {
+      let schoolDoc = await School.findOne({ name: schoolToUse });
       if (!schoolDoc) {
         // Create new school
         schoolDoc = new School({
-          name: finalSchool || school,
+          name: schoolToUse,
           level: 'Preparatory', // Default level
           ownership: 'Public', // Default ownership
           city: 'Unknown' // Default city
         });
         await schoolDoc.save();
       }
-      schoolId = schoolDoc._id;
-    } else {
-      schoolId = finalSchool || school;
+      schoolToUse = schoolDoc._id;
     }
 
     user = new User({
@@ -100,7 +100,7 @@ exports.registerUser = async (req, res) => {
       email: finalEmail,
       password,
       role: finalRole,
-      school: schoolId,
+      school: schoolToUse,
       scienceStream: finalScienceStream,
       grade: finalGrade,
       subjects: finalSubjects,
