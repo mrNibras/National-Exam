@@ -9,33 +9,12 @@ const app = express();
 // Connect to Database
 connectDB();
 
-// Handle CORS
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    // Define allowed origins
-    const allowedOrigins = [
-      'http://localhost:3000',                    // Local frontend
-      'https://national-exam-frontend.vercel.app', // Production frontend on Vercel
-      process.env.FRONTEND_URL                     // Custom domain if set
-    ];
-
-    // Check if origin is in the allowed list or is a vercel.app subdomain
-    const isAllowedOrigin = allowedOrigins.includes(origin) ||
-                           (origin && origin.endsWith('.vercel.app'));
-
-    if (isAllowedOrigin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+// Handle CORS - Allow all origins for development
+app.use(cors({
+  origin: true, // Allow all origins
   credentials: true,
   optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+}));
 
 app.use(express.json({ extended: false }));
 

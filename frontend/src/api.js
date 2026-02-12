@@ -8,13 +8,22 @@ const registerStudent = async (studentData) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(studentData)
     });
+
+    const responseBody = await response.text(); // Get response as text first
     
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.msg || 'Registration failed');
+      // Try to parse as JSON, fallback to plain text if it's not JSON
+      try {
+        const errorData = JSON.parse(responseBody);
+        throw new Error(errorData.msg || 'Registration failed');
+      } catch (e) {
+        // If parsing fails, throw the raw response
+        throw new Error(responseBody || `HTTP error! status: ${response.status}`);
+      }
     }
-    
-    const data = await response.json();
+
+    // Parse successful response as JSON
+    const data = JSON.parse(responseBody);
     return { success: true, token: data.token, message: 'Student registered successfully!' };
   } catch (error) {
     console.error('Registration error:', error);
@@ -29,13 +38,22 @@ const registerTeacher = async (teacherData) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(teacherData)
     });
+
+    const responseBody = await response.text(); // Get response as text first
     
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.msg || 'Registration failed');
+      // Try to parse as JSON, fallback to plain text if it's not JSON
+      try {
+        const errorData = JSON.parse(responseBody);
+        throw new Error(errorData.msg || 'Registration failed');
+      } catch (e) {
+        // If parsing fails, throw the raw response
+        throw new Error(responseBody || `HTTP error! status: ${response.status}`);
+      }
     }
-    
-    const data = await response.json();
+
+    // Parse successful response as JSON
+    const data = JSON.parse(responseBody);
     return { success: true, token: data.token, message: 'Teacher registered successfully!' };
   } catch (error) {
     console.error('Registration error:', error);

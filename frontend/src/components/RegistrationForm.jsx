@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerStudent, registerTeacher } from '../api';
-import ethiopianRegions from '../data/ethiopianAdministrativeDivisions';
 import './RegistrationForm.css';
 
 const RegistrationForm = ({ role = 'student' }) => {
@@ -13,9 +12,6 @@ const RegistrationForm = ({ role = 'student' }) => {
     email: '',
     password: '',
     confirmPassword: '',
-    region: '',
-    zone: '',
-    woreda: '',
     schoolName: '',
     grade: '',
     stream: '',
@@ -67,9 +63,6 @@ const RegistrationForm = ({ role = 'student' }) => {
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     if (!formData.password) newErrors.password = 'Password is required';
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!formData.region) newErrors.region = 'Region is required';
-    if (!formData.zone) newErrors.zone = 'Zone is required';
-    if (!formData.woreda) newErrors.woreda = 'Woreda is required';
     if (!formData.schoolName) newErrors.schoolName = 'School is required';
 
     // Validate email format
@@ -116,18 +109,14 @@ const RegistrationForm = ({ role = 'student' }) => {
       if (role === 'teacher') {
         // Teacher registration data
         const teacherData = {
-          fullName: formData.fullName,
+          name: formData.fullName,
           email: formData.email,
           password: formData.password,
-          role: 'teacher',
-          school: {
-            name: formData.schoolName,
-            region: formData.region,
-            zone: formData.zone,
-            woreda: formData.woreda
-          },
-          subjects: formData.subjects.split(',').map(subject => subject.trim()), // Convert to array
-          experience: parseInt(formData.experience) || 0
+          role: 'Teacher',
+          school: formData.schoolName, // Send the school name as a string
+          subjects: formData.subjects.split(',').map(subject => subject.trim()).filter(s => s), // Convert to array and remove empty strings
+          experience: formData.experience,
+          about: formData.experience ? `Experienced teacher with ${formData.experience} years of experience` : 'Experienced teacher'
         };
 
         const response = await registerTeacher(teacherData);
@@ -140,18 +129,13 @@ const RegistrationForm = ({ role = 'student' }) => {
       } else {
         // Student registration data
         const studentData = {
-          fullName: formData.fullName,
+          name: formData.fullName,
           email: formData.email,
           password: formData.password,
-          role: 'student',
-          school: {
-            name: formData.schoolName,
-            region: formData.region,
-            zone: formData.zone,
-            woreda: formData.woreda
-          },
+          role: 'Student',
+          school: formData.schoolName, // Send the school name as a string
           grade: parseInt(formData.grade),
-          ...(parseInt(formData.grade) >= 11 && { stream: formData.stream })
+          scienceStream: parseInt(formData.grade) >= 11 ? formData.stream : undefined
         };
 
         const response = await registerStudent(studentData);
@@ -231,59 +215,6 @@ const RegistrationForm = ({ role = 'student' }) => {
             {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
           </div>
 
-          {/* Location Information */}
-          <div className="form-group">
-            <label htmlFor="region">Region *</label>
-            <select
-              id="region"
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              className={errors.region ? 'error' : ''}
-            >
-              <option value="">Select Region</option>
-              {ethiopianRegions.map(region => (
-                <option key={region.id} value={region.id}>{region.name}</option>
-              ))}
-            </select>
-            {errors.region && <span className="error">{errors.region}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="zone">Zone *</label>
-            <select
-              id="zone"
-              name="zone"
-              value={formData.zone}
-              onChange={handleChange}
-              disabled={!formData.region}
-              className={errors.zone ? 'error' : ''}
-            >
-              <option value="">Select Zone</option>
-              {(ethiopianRegions.find(r => r.id === formData.region)?.zones || []).map(zone => (
-                <option key={zone.id} value={zone.id}>{zone.name}</option>
-              ))}
-            </select>
-            {errors.zone && <span className="error">{errors.zone}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="woreda">Woreda *</label>
-            <select
-              id="woreda"
-              name="woreda"
-              value={formData.woreda}
-              onChange={handleChange}
-              disabled={!formData.zone}
-              className={errors.woreda ? 'error' : ''}
-            >
-              <option value="">Select Woreda</option>
-              {(ethiopianRegions.find(r => r.id === formData.region)?.zones.find(z => z.id === formData.zone)?.woredas || []).map((woreda, index) => (
-                <option key={index} value={woreda}>{woreda}</option>
-              ))}
-            </select>
-            {errors.woreda && <span className="error">{errors.woreda}</span>}
-          </div>
 
           {/* School Selection */}
           <div className="form-group">

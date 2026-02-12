@@ -71,7 +71,7 @@ The National Exam Preparation System is designed to help Ethiopian students prep
 
 ### Prerequisites
 - Node.js (v16 or higher)
-- MongoDB
+- MongoDB (running locally or cloud instance)
 - npm or yarn
 
 ### Setup
@@ -94,18 +94,27 @@ npm install
 ```
 
 3. Set up environment variables:
-Create `.env` files in both backend and frontend directories with appropriate configurations.
+
+In the `backend/` directory, create a `.env` file with:
+```
+MONGODB_URI=mongodb://localhost:27017/national_exam
+JWT_SECRET=your_jwt_secret_key_here
+FRONTEND_URL=http://localhost:8080
+```
 
 4. Start the applications:
 ```bash
-# Backend
+# Terminal 1: Start the backend server
 cd backend
-npm start
+npm run dev
 
-# Frontend
+# Terminal 2: Start the frontend server
 cd frontend
 npm run dev
 ```
+
+The backend will run on `http://localhost:5000` and the frontend will run on `http://localhost:8080`.
+The Vite proxy will forward API requests from the frontend to the backend.
 
 ## Usage
 

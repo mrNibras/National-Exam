@@ -1,6 +1,7 @@
 const Question = require('./Question');
 const TestAttempt = require('./TestAttempt');
 const User = require('./User');
+const School = require('./School');
 const Invitation = require('./Invitation');
 const bcrypt = require('bcryptjs');
 const { sendSms } = require('./notificationService');
@@ -74,12 +75,32 @@ exports.registerUser = async (req, res) => {
       }
     }
 
+    // If school is provided as a string (school name) and not as an ObjectId, create the school first
+    let schoolId;
+    if (typeof (finalSchool || school) === 'string') {
+      // Check if school already exists
+      let schoolDoc = await School.findOne({ name: finalSchool || school });
+      if (!schoolDoc) {
+        // Create new school
+        schoolDoc = new School({
+          name: finalSchool || school,
+          level: 'Preparatory', // Default level
+          ownership: 'Public', // Default ownership
+          city: 'Unknown' // Default city
+        });
+        await schoolDoc.save();
+      }
+      schoolId = schoolDoc._id;
+    } else {
+      schoolId = finalSchool || school;
+    }
+
     user = new User({
       name,
       email: finalEmail,
       password,
       role: finalRole,
-      school: finalSchool || school, // Use the school object from registration if provided
+      school: schoolId,
       scienceStream: finalScienceStream,
       grade: finalGrade,
       subjects: finalSubjects,
