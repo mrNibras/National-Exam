@@ -1,0 +1,102 @@
+export const subjects = [
+  { id: "math", name: "Mathematics", icon: "📐", color: "primary" },
+  { id: "physics", name: "Physics", icon: "⚡", color: "info" },
+  { id: "chemistry", name: "Chemistry", icon: "🧪", color: "success" },
+  { id: "biology", name: "Biology", icon: "🧬", color: "warning" },
+  { id: "english", name: "English", icon: "📖", color: "secondary" },
+  { id: "civics", name: "Civics", icon: "🏛️", color: "accent" },
+];
+
+export const mockQuestions = [
+  {
+    id: "q1",
+    subject: "Mathematics",
+    topic: "Algebra",
+    grade: 10,
+    question: "What is the solution to the equation 2x + 5 = 15?",
+    options: ["x = 3", "x = 5", "x = 7", "x = 10"],
+    correctAnswer: 1,
+    difficultyRating: 1200,
+  },
+  {
+    id: "q2",
+    subject: "Mathematics",
+    topic: "Algebra",
+    grade: 10,
+    question: "Simplify: 3(2x - 4) + 6",
+    options: ["6x - 6", "6x - 12", "6x + 6", "6x - 18"],
+    correctAnswer: 0,
+    difficultyRating: 1300,
+  },
+  {
+    id: "q3",
+    subject: "Mathematics",
+    topic: "Geometry",
+    grade: 10,
+    question: "What is the area of a circle with radius 7 cm?",
+    options: ["44 cm²", "154 cm²", "22 cm²", "308 cm²"],
+    correctAnswer: 1,
+    difficultyRating: 1150,
+  },
+  {
+    id: "q4",
+    subject: "Mathematics",
+    topic: "Trigonometry",
+    grade: 11,
+    question: "What is the value of sin(30°)?",
+    options: ["1", "0.5", "√3/2", "0"],
+    correctAnswer: 1,
+    difficultyRating: 1250,
+  },
+  {
+    id: "q5",
+    subject: "Mathematics",
+    topic: "Calculus",
+    grade: 12,
+    question: "What is the derivative of x³?",
+    options: ["x²", "3x²", "3x", "2x³"],
+    correctAnswer: 1,
+    difficultyRating: 1400,
+  },
+];
+
+export const mockStudentStats = {
+  abilityScore: 1350,
+  testsCompleted: 47,
+  averageScore: 72,
+  streak: 5,
+  rank: 12,
+  totalStudents: 156,
+  recentScores: [65, 70, 68, 75, 80, 72, 78, 85],
+  subjectPerformance: [
+    { subject: "Mathematics", score: 78, tests: 15 },
+    { subject: "Physics", score: 65, tests: 10 },
+    { subject: "Chemistry", score: 82, tests: 8 },
+    { subject: "Biology", score: 70, tests: 9 },
+    { subject: "English", score: 88, tests: 5 },
+  ],
+  weaknesses: [
+    { topic: "Trigonometry", subject: "Mathematics", accuracy: 35, questionsAttempted: 20 },
+    { topic: "Electromagnetic Waves", subject: "Physics", accuracy: 40, questionsAttempted: 15 },
+    { topic: "Organic Chemistry", subject: "Chemistry", accuracy: 45, questionsAttempted: 12 },
+    { topic: "Genetics", subject: "Biology", accuracy: 48, questionsAttempted: 18 },
+  ],
+  strengths: [
+    { topic: "Grammar", subject: "English", accuracy: 92, questionsAttempted: 25 },
+    { topic: "Algebra", subject: "Mathematics", accuracy: 88, questionsAttempted: 30 },
+    { topic: "Stoichiometry", subject: "Chemistry", accuracy: 85, questionsAttempted: 14 },
+  ],
+};
+
+export const leaderboard = [
+  { rank: 1, name: "Abebe Tadesse", school: "Unity Academy", score: 1580, change: 2 },
+  { rank: 2, name: "Sara Mengistu", school: "Bole Preparatory", score: 1545, change: -1 },
+  { rank: 3, name: "Daniel Worku", school: "Menelik School", score: 1520, change: 1 },
+  { rank: 4, name: "Hanna Bekele", school: "Lideta Academy", score: 1498, change: 0 },
+  { rank: 5, name: "Yonas Hailu", school: "Unity Academy", score: 1475, change: 3 },
+  { rank: 6, name: "Meron Alemu", school: "Bole Preparatory", score: 1460, change: -2 },
+  { rank: 7, name: "Dawit Tesfaye", school: "Addis Academy", score: 1445, change: 1 },
+  { rank: 8, name: "Bethlehem Girma", school: "Menelik School", score: 1430, change: -1 },
+  { rank: 9, name: "Solomon Kebede", school: "Lideta Academy", score: 1415, change: 0 },
+  { rank: 10, name: "Tigist Negash", school: "Unity Academy", score: 1400, change: 2 },
+];
