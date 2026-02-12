@@ -35,6 +35,36 @@ const UserSchema = new mongoose.Schema({
       return this.role === 'Student';
     }
   },
+  grade: {
+    type: Number,
+    min: 7,
+    max: 12,
+    required: function() {
+      // Grade is required for students
+      return this.role === 'Student';
+    }
+  },
+  subjects: {
+    type: [String], // Array of subject names for teachers
+    required: function() {
+      // Subjects are required for teachers
+      return this.role === 'Teacher';
+    }
+  },
+  experience: {
+    type: String, // Experience level for teachers
+    required: function() {
+      // Experience is required for teachers
+      return this.role === 'Teacher';
+    }
+  },
+  about: {
+    type: String, // About information for teachers
+    required: function() {
+      // About is required for teachers
+      return this.role === 'Teacher';
+    }
+  },
   abilityScore: {
     type: Number,
     default: 1000, // Starting ability score, similar to an Elo rating

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerStudent } from '../api';
+import { registerStudent, registerTeacher } from '../api';
 import ethiopianRegions from '../data/ethiopianAdministrativeDivisions';
 import './RegistrationForm.css';
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ role = 'student' }) => {
   const navigate = useNavigate();
 
   // Form state
@@ -15,11 +15,13 @@ const RegistrationForm = () => {
     confirmPassword: '',
     region: '',
     zone: '',
-    woreda: '', // Using woreda instead of city to match Ethiopian administrative divisions
-    schoolId: '',
+    woreda: '',
     schoolName: '',
     grade: '',
-    stream: '' // Will be 'Natural' or 'Social' for grades 11-12
+    stream: '',
+    // Teacher-specific fields
+    subjects: '',
+    experience: ''
   });
 
   // Options state
@@ -27,10 +29,9 @@ const RegistrationForm = () => {
   const [filteredSchools, setFilteredSchools] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [showCustomSchoolInput, setShowCustomSchoolInput] = useState(false);
 
   // Initialize component
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchSchools = async () => {
       try {
         setSchools([]); // Placeholder for now
@@ -42,104 +43,12 @@ const RegistrationForm = () => {
     fetchSchools();
   }, []);
 
-  // Filter schools when location changes
-  React.useEffect(() => {
-    const filterSchools = async () => {
-      if (formData.region || formData.zone || formData.woreda) {
-        try {
-          // For now, using client-side filtering
-          const filtered = schools.filter(school => {
-            // Map the selected IDs to actual names for comparison
-            const selectedRegionObj = ethiopianRegions.find(r => r.id === formData.region);
-            const selectedZoneObj = selectedRegionObj?.zones.find(z => z.id === formData.zone);
-
-            // Match the selected region name - school.region is an object with name property
-            const regionMatch = !formData.region ||
-              (school.region && typeof school.region === 'object'
-                ? school.region.name.toLowerCase() === (selectedRegionObj?.name.toLowerCase() || '')
-                : school.region.toLowerCase() === (selectedRegionObj?.name.toLowerCase() || ''));
-
-            // Match the selected zone name - school.zone is an object with name property
-            const zoneMatch = !formData.zone ||
-              (school.zone && typeof school.zone === 'object'
-                ? school.zone.name.toLowerCase() === (selectedZoneObj?.name.toLowerCase() || '')
-                : school.zone.toLowerCase() === (selectedZoneObj?.name.toLowerCase() || ''));
-
-            // Match the selected woreda - school.woreda is an object with name property
-            const woredaMatch = !formData.woreda ||
-              (school.woreda && typeof school.woreda === 'object'
-                ? school.woreda.name.toLowerCase() === formData.woreda.toLowerCase()
-                : school.woreda.toLowerCase() === formData.woreda.toLowerCase());
-
-            return regionMatch && zoneMatch && woredaMatch;
-          });
-
-          setFilteredSchools(filtered);
-        } catch (error) {
-          console.error('Error filtering schools:', error);
-          // Fallback to client-side filtering
-          const selectedRegionObj = ethiopianRegions.find(r => r.id === formData.region);
-          const selectedZoneObj = selectedRegionObj?.zones.find(z => z.id === formData.zone);
-
-          const filtered = schools.filter(school => {
-            // Match the selected region name - school.region is an object with name property
-            const regionMatch = !formData.region ||
-              (school.region && typeof school.region === 'object'
-                ? school.region.name.toLowerCase() === (selectedRegionObj?.name.toLowerCase() || '')
-                : school.region.toLowerCase() === (selectedRegionObj?.name.toLowerCase() || ''));
-
-            // Match the selected zone name - school.zone is an object with name property
-            const zoneMatch = !formData.zone ||
-              (school.zone && typeof school.zone === 'object'
-                ? school.zone.name.toLowerCase() === (selectedZoneObj?.name.toLowerCase() || '')
-                : school.zone.toLowerCase() === (selectedZoneObj?.name.toLowerCase() || ''));
-
-            // Match the selected woreda - school.woreda is an object with name property
-            const woredaMatch = !formData.woreda ||
-              (school.woreda && typeof school.woreda === 'object'
-                ? school.woreda.name.toLowerCase() === formData.woreda.toLowerCase()
-                : school.woreda.toLowerCase() === formData.woreda.toLowerCase());
-
-            return regionMatch && zoneMatch && woredaMatch;
-          });
-
-          setFilteredSchools(filtered);
-        }
-      } else {
-        setFilteredSchools([]);
-      }
-    };
-    
-    filterSchools();
-  }, [formData.region, formData.zone, formData.woreda, schools]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        [name]: value
-      };
-
-      // Reset dependent fields when parent changes
-      if (name === 'region') {
-        newData.zone = '';  // Reset zone when region changes
-        newData.woreda = ''; // Reset woreda when region changes
-      } else if (name === 'zone') {
-        newData.woreda = ''; // Reset woreda when zone changes
-      }
-
-      // Reset school selection when region/zone/woreda changes
-      if (['region', 'zone', 'woreda'].includes(name)) {
-        newData.schoolId = '';
-        newData.schoolName = '';
-        newData.customSchoolName = '';
-        setShowCustomSchoolInput(false);
-      }
-
-      return newData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
 
     // Clear errors when user starts typing
     if (errors[name]) {
@@ -148,36 +57,6 @@ const RegistrationForm = () => {
         [name]: ''
       }));
     }
-  };
-
-  const handleSchoolSelect = (e) => {
-    const selectedValue = e.target.value;
-    if (selectedValue === 'custom') {
-      setShowCustomSchoolInput(true);
-      setFormData(prev => ({
-        ...prev,
-        schoolId: '',
-        schoolName: '',
-        customSchoolName: ''
-      }));
-    } else {
-      // Find the selected school object to get its name
-      const selectedSchool = filteredSchools.find(school => school._id === selectedValue);
-      setFormData(prev => ({
-        ...prev,
-        schoolId: selectedValue,
-        schoolName: selectedSchool ? selectedSchool.name : '',
-        customSchoolName: ''
-      }));
-      setShowCustomSchoolInput(false);
-    }
-  };
-
-  const handleCustomSchoolChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      customSchoolName: e.target.value
-    }));
   };
 
   const validateForm = () => {
@@ -191,8 +70,7 @@ const RegistrationForm = () => {
     if (!formData.region) newErrors.region = 'Region is required';
     if (!formData.zone) newErrors.zone = 'Zone is required';
     if (!formData.woreda) newErrors.woreda = 'Woreda is required';
-    if (!formData.schoolName && !formData.customSchoolName) newErrors.schoolName = 'School is required';
-    if (!formData.grade) newErrors.grade = 'Grade is required';
+    if (!formData.schoolName) newErrors.schoolName = 'School is required';
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -205,9 +83,20 @@ const RegistrationForm = () => {
       newErrors.password = 'Password must be at least 6 characters';
     }
 
-    // Validate stream for grades 11-12
-    if (parseInt(formData.grade) >= 11 && !formData.stream) {
+    // Validate grade for students
+    if (role === 'student' && !formData.grade) {
+      newErrors.grade = 'Grade is required';
+    }
+
+    // Validate stream for grades 11-12 students
+    if (role === 'student' && parseInt(formData.grade) >= 11 && !formData.stream) {
       newErrors.stream = 'Stream is required for grades 11 and 12';
+    }
+
+    // Validate teacher-specific fields
+    if (role === 'teacher') {
+      if (!formData.subjects) newErrors.subjects = 'Subjects taught is required';
+      if (!formData.experience) newErrors.experience = 'Teaching experience is required';
     }
 
     setErrors(newErrors);
@@ -224,67 +113,58 @@ const RegistrationForm = () => {
     setIsLoading(true);
 
     try {
-      // Map the region/zone IDs to names for registration
-      const selectedRegionObj = ethiopianRegions.find(r => r.id === formData.region);
-      const selectedZoneObj = selectedRegionObj?.zones.find(z => z.id === formData.zone);
+      if (role === 'teacher') {
+        // Teacher registration data
+        const teacherData = {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          role: 'teacher',
+          school: {
+            name: formData.schoolName,
+            region: formData.region,
+            zone: formData.zone,
+            woreda: formData.woreda
+          },
+          subjects: formData.subjects.split(',').map(subject => subject.trim()), // Convert to array
+          experience: parseInt(formData.experience) || 0
+        };
 
-      const schoolData = {
-        _id: formData.schoolId,  // Include the school ID if selected from the list
-        name: formData.customSchoolName || formData.schoolName,
-        region: selectedRegionObj?.name || formData.region,
-        zone: selectedZoneObj?.name || formData.zone,
-        woreda: formData.woreda
-      };
-
-      // If user entered a custom school name, we would create the school first
-      if (formData.customSchoolName) {
-        try {
-          // Map the region/zone IDs to names for the school creation
-          const selectedRegionObj = ethiopianRegions.find(r => r.id === formData.region);
-          const selectedZoneObj = selectedRegionObj?.zones.find(z => z.id === formData.zone);
-
-          // In a real implementation, we would create the school here
-          // const createdSchool = await SchoolService.createSchool({
-          //   name: formData.customSchoolName,
-          //   region: { name: selectedRegionObj?.name || formData.region },
-          //   zone: { name: selectedZoneObj?.name || formData.zone },  // Using selectedZoneObj here
-          //   woreda: { name: formData.woreda },
-          //   level: 'Secondary',
-          //   ownership: 'Public'
-          // });
-        } catch (schoolError) {
-          console.error('Error creating school:', schoolError);
+        const response = await registerTeacher(teacherData);
+        if (response.success) {
+          alert('Teacher registration successful!');
+          navigate('/dashboard');
+        } else {
+          throw new Error(response.message || 'Registration failed');
         }
-      }
-
-      // Prepare registration data
-      const registrationData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        school: {
-          name: schoolData.name,
-          region: { name: schoolData.region },
-          zone: { name: schoolData.zone },
-          woreda: { name: schoolData.woreda }
-        },
-        grade: parseInt(formData.grade),
-        ...(parseInt(formData.grade) >= 11 && { stream: formData.stream })
-      };
-
-      // Call the registration API
-      const response = await registerStudent(registrationData);
-
-      if (response.success) {
-        // Redirect to login or dashboard
-        alert('Registration successful! Please log in.');
-        navigate('/login');
       } else {
-        setErrors({ general: response.message || 'Registration failed' });
+        // Student registration data
+        const studentData = {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          role: 'student',
+          school: {
+            name: formData.schoolName,
+            region: formData.region,
+            zone: formData.zone,
+            woreda: formData.woreda
+          },
+          grade: parseInt(formData.grade),
+          ...(parseInt(formData.grade) >= 11 && { stream: formData.stream })
+        };
+
+        const response = await registerStudent(studentData);
+        if (response.success) {
+          alert('Student registration successful!');
+          navigate('/dashboard');
+        } else {
+          throw new Error(response.message || 'Registration failed');
+        }
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setErrors({ general: 'An error occurred during registration. Please try again.' });
+      setErrors({ general: error.message || 'An error occurred during registration' });
     } finally {
       setIsLoading(false);
     }
@@ -293,10 +173,10 @@ const RegistrationForm = () => {
   return (
     <div className="registration-container">
       <div className="registration-form">
-        <h2>Student Registration</h2>
+        <h2>{role === 'teacher' ? 'Teacher Registration' : 'Student Registration'}</h2>
         
         {errors.general && <div className="error-message">{errors.general}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           {/* Personal Information */}
           <div className="form-group">
@@ -408,56 +288,41 @@ const RegistrationForm = () => {
           {/* School Selection */}
           <div className="form-group">
             <label htmlFor="schoolName">School *</label>
-            <select
+            <input
+              type="text"
               id="schoolName"
-              value={formData.schoolId || (showCustomSchoolInput ? 'custom' : '')}
-              onChange={handleSchoolSelect}
-              disabled={!formData.woreda}
+              name="schoolName"
+              value={formData.schoolName}
+              onChange={handleChange}
+              placeholder="Enter school name"
               className={errors.schoolName ? 'error' : ''}
-            >
-              <option value="">Select School</option>
-              {filteredSchools.map(school => (
-                <option key={school._id} value={school._id}>{school.name}</option>
-              ))}
-              <option value="custom">Add New School</option>
-            </select>
-
-            {showCustomSchoolInput && (
-              <div className="custom-school-input">
-                <input
-                  type="text"
-                  placeholder="Enter school name"
-                  value={formData.customSchoolName || ''}
-                  onChange={handleCustomSchoolChange}
-                  className={errors.schoolName ? 'error' : ''}
-                />
-              </div>
-            )}
-
+            />
             {errors.schoolName && <span className="error">{errors.schoolName}</span>}
           </div>
 
-          {/* Grade Selection */}
-          <div className="form-group">
-            <label htmlFor="grade">Grade *</label>
-            <select
-              id="grade"
-              name="grade"
-              value={formData.grade}
-              onChange={handleChange}
-              className={errors.grade ? 'error' : ''}
-            >
-              <option value="">Select Grade</option>
-              <option value="9">Grade 9</option>
-              <option value="10">Grade 10</option>
-              <option value="11">Grade 11</option>
-              <option value="12">Grade 12</option>
-            </select>
-            {errors.grade && <span className="error">{errors.grade}</span>}
-          </div>
+          {/* Grade Selection - only for students */}
+          {role === 'student' && (
+            <div className="form-group">
+              <label htmlFor="grade">Grade *</label>
+              <select
+                id="grade"
+                name="grade"
+                value={formData.grade}
+                onChange={handleChange}
+                className={errors.grade ? 'error' : ''}
+              >
+                <option value="">Select Grade</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+              </select>
+              {errors.grade && <span className="error">{errors.grade}</span>}
+            </div>
+          )}
 
-          {/* Stream Selection (only for grades 11-12) */}
-          {parseInt(formData.grade) >= 11 && (
+          {/* Stream Selection - only for students in grades 11-12 */}
+          {role === 'student' && parseInt(formData.grade) >= 11 && (
             <div className="form-group">
               <label>Stream *</label>
               <div className="radio-group">
@@ -483,6 +348,41 @@ const RegistrationForm = () => {
                 </label>
               </div>
               {errors.stream && <span className="error">{errors.stream}</span>}
+            </div>
+          )}
+
+          {/* Teacher-specific fields - only for teachers */}
+          {role === 'teacher' && (
+            <div className="teacher-fields">
+              <div className="form-group">
+                <label htmlFor="subjects">Subjects Taught *</label>
+                <input
+                  type="text"
+                  id="subjects"
+                  name="subjects"
+                  value={formData.subjects}
+                  onChange={handleChange}
+                  placeholder="e.g., Mathematics, Physics"
+                  className={errors.subjects ? 'error' : ''}
+                />
+                {errors.subjects && <span className="error">{errors.subjects}</span>}
+                <p className="help-text">Separate multiple subjects with commas</p>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="experience">Teaching Experience (years) *</label>
+                <input
+                  type="number"
+                  id="experience"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  min="0"
+                  placeholder="e.g., 5"
+                  className={errors.experience ? 'error' : ''}
+                />
+                {errors.experience && <span className="error">{errors.experience}</span>}
+              </div>
             </div>
           )}
 

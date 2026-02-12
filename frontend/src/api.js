@@ -1,38 +1,46 @@
 import { toast } from "sonner";
 
-// Mock API functions for registration
+// API functions for registration
 const registerStudent = async (studentData) => {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // In a real application, this would be an actual API call:
-  // const response = await fetch('/api/register/student', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(studentData)
-  // });
-  // return await response.json();
-  
-  // For now, returning mock success response
-  console.log('Student registration data:', studentData);
-  return { success: true, message: 'Student registered successfully!' };
+  try {
+    const response = await fetch('/api/users/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(studentData)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Registration failed');
+    }
+    
+    const data = await response.json();
+    return { success: true, token: data.token, message: 'Student registered successfully!' };
+  } catch (error) {
+    console.error('Registration error:', error);
+    return { success: false, message: error.message };
+  }
 };
 
 const registerTeacher = async (teacherData) => {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // In a real application, this would be an actual API call:
-  // const response = await fetch('/api/register/teacher', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(teacherData)
-  // });
-  // return await response.json();
-  
-  // For now, returning mock success response
-  console.log('Teacher registration data:', teacherData);
-  return { success: true, message: 'Teacher registered successfully!' };
+  try {
+    const response = await fetch('/api/users/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(teacherData)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.msg || 'Registration failed');
+    }
+    
+    const data = await response.json();
+    return { success: true, token: data.token, message: 'Teacher registered successfully!' };
+  } catch (error) {
+    console.error('Registration error:', error);
+    return { success: false, message: error.message };
+  }
 };
 
 export { registerStudent, registerTeacher };

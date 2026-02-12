@@ -1,5 +1,6 @@
 const Question = require('./Question');
 const TestAttempt = require('./TestAttempt');
+const User = require('./User');
 const { createAuditLog } = require('./auditService');
 const { validationResult } = require('express-validator');
 
