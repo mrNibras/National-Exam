@@ -75,3 +75,5 @@ dist-server/
 
 # Dist build for frontend
 frontend/dist/
+.env
+.env.*
