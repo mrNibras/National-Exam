@@ -1,16 +1,27 @@
 import { toast } from "sonner";
 
+// Determine the API base URL based on environment
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+// Helper function to create API endpoints
+const createApiUrl = (endpoint) => {
+  if (endpoint.startsWith('/')) {
+    endpoint = endpoint.substring(1); // Remove leading slash
+  }
+  return `${API_BASE_URL}/api/${endpoint}`;
+};
+
 // API functions for registration
 const registerStudent = async (studentData) => {
   try {
-    const response = await fetch('/api/users/register', {
+    const response = await fetch(createApiUrl('users/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(studentData)
     });
 
     const responseBody = await response.text(); // Get response as text first
-    
+
     if (!response.ok) {
       // Try to parse as JSON, fallback to plain text if it's not JSON
       try {
@@ -33,14 +44,14 @@ const registerStudent = async (studentData) => {
 
 const registerTeacher = async (teacherData) => {
   try {
-    const response = await fetch('/api/users/register', {
+    const response = await fetch(createApiUrl('users/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(teacherData)
     });
 
     const responseBody = await response.text(); // Get response as text first
-    
+
     if (!response.ok) {
       // Try to parse as JSON, fallback to plain text if it's not JSON
       try {

@@ -12,12 +12,20 @@ if (process.env.NODE_ENV !== 'test' || process.env.TEST_WITH_DB === 'true') {
   connectDB();
 }
 
-// Handle CORS - Allow all origins for development
-app.use(cors({
-  origin: true, // Allow all origins
+// Handle CORS - Different configurations for development vs production
+const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200
-}));
+};
+
+// In production, allow only the frontend domain
+if (process.env.NODE_ENV === 'production') {
+  corsOptions.origin = process.env.FRONTEND_URL || false; // Use production frontend URL
+} else {
+  corsOptions.origin = true; // Allow all origins in development
+}
+
+app.use(cors(corsOptions));
 
 app.use(express.json({ extended: false }));
 
