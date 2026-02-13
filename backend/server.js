@@ -7,7 +7,10 @@ const { scheduleJobs } = require('./reminderJobs');
 const app = express();
 
 // Connect to Database
-connectDB();
+// Note: For integration tests, we'll handle DB connection separately
+if (process.env.NODE_ENV !== 'test' || process.env.TEST_WITH_DB === 'true') {
+  connectDB();
+}
 
 // Handle CORS - Allow all origins for development
 app.use(cors({

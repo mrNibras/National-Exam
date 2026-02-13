@@ -1,25 +1,8 @@
 const request = require('supertest');
 const app = require('../app');
 const User = require('../models/User');
-const mongoose = require('mongoose');
-require('dotenv').config();
 
 describe('User Registration API', () => {
-  beforeAll(async () => {
-    // Connect to test database
-    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
-  });
-
-  beforeEach(async () => {
-    // Clean up database before each test
-    await User.deleteMany({});
-  });
-
-  afterAll(async () => {
-    // Close database connection
-    await mongoose.connection.close();
-  });
-
   it('should return error when required fields are missing', async () => {
     const userData = {
       name: 'Test User',

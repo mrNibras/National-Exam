@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +10,53 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Demo: navigate to dashboard
-    toast({ title: "Welcome back!", description: "Redirecting to your dashboard..." });
-    setTimeout(() => window.location.href = "/dashboard", 1000);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store the token in localStorage
+        localStorage.setItem('token', data.token);
+        
+        toast({ 
+          title: "Login successful!", 
+          description: "Redirecting to your dashboard..." 
+        });
+        
+        // Redirect to dashboard based on user role
+        setTimeout(() => navigate('/dashboard'), 1000);
+      } else {
+        toast({ 
+          title: "Login failed", 
+          description: data.msg || 'Invalid credentials',
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({ 
+        title: "Login failed", 
+        description: "An error occurred during login",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,7 +100,9 @@ const Login = () => {
                 </button>
               </div>
             </div>
-            <Button type="submit" className="w-full" size="lg">Sign In</Button>
+            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+              {isLoading ? "Signing In..." : "Sign In"}
+            </Button>
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">

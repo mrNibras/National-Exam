@@ -122,7 +122,7 @@ const RegistrationForm = ({ role = 'student' }) => {
         const response = await registerTeacher(teacherData);
         if (response.success) {
           alert('Teacher registration successful!');
-          navigate('/dashboard');
+          navigate('/teacher/dashboard');
         } else {
           throw new Error(response.message || 'Registration failed');
         }
@@ -261,8 +261,8 @@ const RegistrationForm = ({ role = 'student' }) => {
                   <input
                     type="radio"
                     name="stream"
-                    value="Natural"
-                    checked={formData.stream === 'Natural'}
+                    value="Natural Science"
+                    checked={formData.stream === 'Natural Science'}
                     onChange={handleChange}
                   />
                   Natural Science
@@ -271,8 +271,8 @@ const RegistrationForm = ({ role = 'student' }) => {
                   <input
                     type="radio"
                     name="stream"
-                    value="Social"
-                    checked={formData.stream === 'Social'}
+                    value="Social Science"
+                    checked={formData.stream === 'Social Science'}
                     onChange={handleChange}
                   />
                   Social Science

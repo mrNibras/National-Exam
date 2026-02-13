@@ -1,20 +1,8 @@
 const request = require('supertest');
 const app = require('../app');
 const Subject = require('../models/Subject');
-const mongoose = require('mongoose');
-require('dotenv').config();
 
 describe('Subject API', () => {
-  beforeAll(async () => {
-    // Connect to test database
-    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
-  });
-
-  afterAll(async () => {
-    // Close database connection
-    await mongoose.connection.close();
-  });
-
   it('should return all subjects', async () => {
     const response = await request(app)
       .get('/api/subjects')
@@ -23,7 +11,7 @@ describe('Subject API', () => {
     expect(response.body.success).toBe(true);
     expect(Array.isArray(response.body.data)).toBe(true);
     expect(response.body.data.length).toBeGreaterThan(0);
-    
+
     // Check that first subject has expected properties
     const firstSubject = response.body.data[0];
     expect(firstSubject).toHaveProperty('_id');
@@ -49,7 +37,7 @@ describe('Subject API', () => {
 
     if (subjectsResponse.body.data.length > 0) {
       const subjectId = subjectsResponse.body.data[0]._id;
-      
+
       const response = await request(app)
         .get(`/api/subjects/${subjectId}`)
         .expect(200);
