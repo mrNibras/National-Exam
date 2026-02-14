@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import DashboardLayout from '../components/DashboardLayout';
+import { getClasses, getQuestions } from '@/api';
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
@@ -16,40 +17,36 @@ const TeacherDashboard = () => {
     // Fetch teacher statistics
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/classes', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (response.ok) {
-          const classes = await response.json();
+        const classesResult = await getClasses();
+
+        if (classesResult.success) {
+          const classes = classesResult.data;
           setStats(prev => ({
             ...prev,
             totalClasses: classes.length
           }));
-          
+
           // Calculate total students
           const totalStudents = classes.reduce((acc, cls) => acc + (cls.students?.length || 0), 0);
           setStats(prev => ({
             ...prev,
             totalStudents
           }));
+        } else {
+          console.error('Error fetching classes:', classesResult.data?.msg || classesResult.data?.message);
         }
-        
+
         // Fetch total questions created by this teacher
-        const questionsResponse = await fetch('/api/questions', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (questionsResponse.ok) {
-          const questionsData = await questionsResponse.json();
+        const questionsResult = await getQuestions();
+
+        if (questionsResult.success) {
+          const questionsData = questionsResult.data;
           setStats(prev => ({
             ...prev,
             totalQuestions: questionsData.total || questionsData.questions?.length || 0
           }));
+        } else {
+          console.error('Error fetching questions:', questionsResult.data?.msg || questionsResult.data?.message);
         }
       } catch (error) {
         console.error('Error fetching stats:', error);

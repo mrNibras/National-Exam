@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { getClasses, makeApiRequest } from '@/api';
 
 const TeacherClassManagement = () => {
   const navigate = useNavigate();
@@ -21,15 +22,12 @@ const TeacherClassManagement = () => {
   const fetchClasses = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/classes', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setClasses(data);
+      const result = await getClasses();
+
+      if (result.success) {
+        setClasses(result.data);
+      } else {
+        console.error('Error fetching classes:', result.data?.msg || result.data?.message);
       }
     } catch (error) {
       console.error('Error fetching classes:', error);
@@ -40,25 +38,19 @@ const TeacherClassManagement = () => {
 
   const handleCreateClass = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch('/api/classes', {
+      const result = await makeApiRequest('classes', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: JSON.stringify(createClassData)
       });
-      
-      if (response.ok) {
-        const newClass = await response.json();
-        setClasses([...classes, newClass]);
+
+      if (result.success) {
+        setClasses([...classes, result.data]);
         setShowCreateModal(false);
         setCreateClassData({ name: '', description: '', subject: '', grade: '' });
       } else {
-        const errorData = await response.json();
-        alert(errorData.msg || 'Failed to create class');
+        alert(result.data?.msg || result.data?.message || 'Failed to create class');
       }
     } catch (error) {
       console.error('Error creating class:', error);
@@ -69,18 +61,14 @@ const TeacherClassManagement = () => {
   const handleDeleteClass = async (classId) => {
     if (window.confirm('Are you sure you want to delete this class? This will not affect the students.')) {
       try {
-        const response = await fetch(`/api/classes/${classId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+        const result = await makeApiRequest(`classes/${classId}`, {
+          method: 'DELETE'
         });
-        
-        if (response.ok) {
+
+        if (result.success) {
           setClasses(classes.filter(cls => cls._id !== classId));
         } else {
-          const errorData = await response.json();
-          alert(errorData.msg || 'Failed to delete class');
+          alert(result.data?.msg || result.data?.message || 'Failed to delete class');
         }
       } catch (error) {
         console.error('Error deleting class:', error);

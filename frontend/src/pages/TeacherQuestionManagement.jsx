@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { getQuestions, makeApiRequest } from '@/api';
 
 const TeacherQuestionManagement = () => {
   const navigate = useNavigate();
@@ -22,24 +23,21 @@ const TeacherQuestionManagement = () => {
   const fetchQuestions = async () => {
     try {
       setLoading(true);
-      
+
       // Build query string from filters
-      const queryParams = new URLSearchParams({
+      const params = {
         ...filters,
         page: currentPage,
         limit: 10
-      }).toString();
-      
-      const response = await fetch(`/api/questions?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setQuestions(data.questions || []);
-        setTotalPages(Math.ceil((data.total || 0) / 10));
+      };
+
+      const result = await getQuestions(params);
+
+      if (result.success) {
+        setQuestions(result.data.questions || []);
+        setTotalPages(Math.ceil((result.data.total || 0) / 10));
+      } else {
+        console.error('Error fetching questions:', result.data?.msg || result.data?.message);
       }
     } catch (error) {
       console.error('Error fetching questions:', error);
@@ -64,18 +62,14 @@ const TeacherQuestionManagement = () => {
   const handleDeleteQuestion = async (questionId) => {
     if (window.confirm('Are you sure you want to delete this question?')) {
       try {
-        const response = await fetch(`/api/questions/${questionId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+        const result = await makeApiRequest(`questions/${questionId}`, {
+          method: 'DELETE'
         });
-        
-        if (response.ok) {
+
+        if (result.success) {
           fetchQuestions(); // Refresh the list
         } else {
-          const errorData = await response.json();
-          alert(errorData.msg || 'Failed to delete question');
+          alert(result.data?.msg || result.data?.message || 'Failed to delete question');
         }
       } catch (error) {
         console.error('Error deleting question:', error);

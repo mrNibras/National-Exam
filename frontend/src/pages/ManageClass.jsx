@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { getClassStudents, getUsers, addStudentToClass, removeStudentFromClass } from '@/api';
 
 const ManageClass = () => {
   const navigate = useNavigate();
@@ -19,29 +20,19 @@ const ManageClass = () => {
   const fetchClassData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch class details
-      const classResponse = await fetch(`/api/classes/${classId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (classResponse.ok) {
-        const classInfo = await classResponse.json();
-        setClassData(classInfo);
+      const classResult = await getClassStudents(classId);
+
+      if (classResult.success) {
+        setClassData(classResult.data);
       }
-      
+
       // Fetch all students in the school
-      const studentsResponse = await fetch('/api/users?role=Student', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (studentsResponse.ok) {
-        const allStudentsData = await studentsResponse.json();
-        setAllStudents(allStudentsData.users || []);
+      const studentsResult = await getUsers('Student');
+
+      if (studentsResult.success) {
+        setAllStudents(studentsResult.data.users || []);
       }
     } catch (error) {
       console.error('Error fetching class data:', error);
@@ -52,25 +43,16 @@ const ManageClass = () => {
 
   const handleAddStudent = async () => {
     if (!selectedStudent) return;
-    
+
     try {
-      const response = await fetch(`/api/classes/${classId}/add-student`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ studentId: selectedStudent })
-      });
-      
-      if (response.ok) {
-        const updatedClass = await response.json();
-        setClassData(updatedClass);
+      const result = await addStudentToClass(classId, selectedStudent);
+
+      if (result.success) {
+        setClassData(result.data);
         setShowAddStudentModal(false);
         setSelectedStudent('');
       } else {
-        const errorData = await response.json();
-        alert(errorData.msg || 'Failed to add student');
+        alert(result.data?.msg || result.data?.message || 'Failed to add student');
       }
     } catch (error) {
       console.error('Error adding student:', error);
@@ -82,23 +64,14 @@ const ManageClass = () => {
     if (!window.confirm('Are you sure you want to remove this student from the class?')) {
       return;
     }
-    
+
     try {
-      const response = await fetch(`/api/classes/${classId}/remove-student`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ studentId })
-      });
-      
-      if (response.ok) {
-        const updatedClass = await response.json();
-        setClassData(updatedClass);
+      const result = await removeStudentFromClass(classId, studentId);
+
+      if (result.success) {
+        setClassData(result.data);
       } else {
-        const errorData = await response.json();
-        alert(errorData.msg || 'Failed to remove student');
+        alert(result.data?.msg || result.data?.message || 'Failed to remove student');
       }
     } catch (error) {
       console.error('Error removing student:', error);

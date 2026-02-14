@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { createQuestion } from '@/api';
 
 const CreateQuestion = () => {
   const navigate = useNavigate();
@@ -44,9 +45,9 @@ const CreateQuestion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate required fields
-    if (!questionData.questionText || !questionData.subject || !questionData.grade || 
+    if (!questionData.questionText || !questionData.subject || !questionData.grade ||
         !questionData.topic || !questionData.competency || !questionData.correctAnswer) {
       alert('Please fill in all required fields');
       return;
@@ -60,21 +61,13 @@ const CreateQuestion = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/questions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(questionData)
-      });
+      const result = await createQuestion(questionData);
 
-      if (response.ok) {
+      if (result.success) {
         alert('Question created successfully!');
         navigate('/teacher/questions');
       } else {
-        const errorData = await response.json();
-        alert(errorData.msg || 'Failed to create question');
+        alert(result.data?.msg || result.data?.message || 'Failed to create question');
       }
     } catch (error) {
       console.error('Error creating question:', error);

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BookOpen, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { login } from '@/api';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,39 +20,31 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const result = await login(email, password);
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (result.success) {
         // Store the token in localStorage
-        localStorage.setItem('token', data.token);
-        
-        toast({ 
-          title: "Login successful!", 
-          description: "Redirecting to your dashboard..." 
+        localStorage.setItem('token', result.data.token);
+
+        toast({
+          title: "Login successful!",
+          description: "Redirecting to your dashboard..."
         });
-        
+
         // Redirect to dashboard based on user role
         setTimeout(() => navigate('/dashboard'), 1000);
       } else {
-        toast({ 
-          title: "Login failed", 
-          description: data.msg || 'Invalid credentials',
+        toast({
+          title: "Login failed",
+          description: result.data?.msg || result.data?.message || 'Invalid credentials',
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast({ 
-        title: "Login failed", 
-        description: "An error occurred during login",
+      toast({
+        title: "Login failed",
+        description: error.message || "An error occurred during login",
         variant: "destructive"
       });
     } finally {

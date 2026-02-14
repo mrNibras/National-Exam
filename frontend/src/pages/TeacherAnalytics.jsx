@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { getClasses, getClassAnalytics } from '@/api';
 
 const TeacherAnalytics = () => {
   const { classId } = useParams();
@@ -25,21 +26,18 @@ const TeacherAnalytics = () => {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('/api/classes', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setClasses(data);
-        
+      const result = await getClasses();
+
+      if (result.success) {
+        setClasses(result.data);
+
         // If no specific class is selected, fetch analytics for the first class
-        if (!classId && data.length > 0) {
-          setSelectedClass(data[0]);
-          fetchClassAnalytics(data[0]._id);
+        if (!classId && result.data.length > 0) {
+          setSelectedClass(result.data[0]);
+          fetchClassAnalytics(result.data[0]._id);
         }
+      } else {
+        console.error('Error fetching classes:', result.data?.msg || result.data?.message);
       }
     } catch (error) {
       console.error('Error fetching classes:', error);
@@ -49,17 +47,14 @@ const TeacherAnalytics = () => {
   const fetchClassAnalytics = async (classId) => {
     try {
       setLoading(true);
-      
+
       // Fetch class performance data
-      const response = await fetch('/api/analytics/class-performance', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAnalyticsData(data);
+      const result = await getClassAnalytics(classId);
+
+      if (result.success) {
+        setAnalyticsData(result.data);
+      } else {
+        console.error('Error fetching analytics:', result.data?.msg || result.data?.message);
       }
     } catch (error) {
       console.error('Error fetching analytics:', error);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { makeApiRequest } from '@/api';
 
 const EditQuestion = () => {
   const navigate = useNavigate();
@@ -23,17 +24,14 @@ const EditQuestion = () => {
 
   const fetchQuestion = async () => {
     try {
-      const response = await fetch(`/api/questions/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+      const result = await makeApiRequest(`questions/${id}`, {
+        method: 'GET'
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setQuestionData(data);
+      if (result.success) {
+        setQuestionData(result.data);
       } else {
-        alert('Failed to load question');
+        alert(result.data?.msg || result.data?.message || 'Failed to load question');
         navigate('/teacher/questions');
       }
     } catch (error) {
@@ -73,9 +71,9 @@ const EditQuestion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate required fields
-    if (!questionData.questionText || !questionData.subject || !questionData.grade || 
+    if (!questionData.questionText || !questionData.subject || !questionData.grade ||
         !questionData.topic || !questionData.competency || !questionData.correctAnswer) {
       alert('Please fill in all required fields');
       return;
@@ -89,21 +87,16 @@ const EditQuestion = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/questions/${id}`, {
+      const result = await makeApiRequest(`questions/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: JSON.stringify(questionData)
       });
 
-      if (response.ok) {
+      if (result.success) {
         alert('Question updated successfully!');
         navigate('/teacher/questions');
       } else {
-        const errorData = await response.json();
-        alert(errorData.msg || 'Failed to update question');
+        alert(result.data?.msg || result.data?.message || 'Failed to update question');
       }
     } catch (error) {
       console.error('Error updating question:', error);
