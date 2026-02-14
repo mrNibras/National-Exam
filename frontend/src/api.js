@@ -190,8 +190,20 @@ const getUsers = async (role = null) => {
   return makeApiRequest(endpoint);
 };
 
-export { 
-  registerStudent, 
+// Function to get entrance exams
+const getEntranceExams = async (params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const endpoint = queryParams ? `entrance-exams?${queryParams}` : 'entrance-exams';
+  return makeApiRequest(endpoint);
+};
+
+// Function to get a specific entrance exam by ID
+const getEntranceExamById = async (id) => {
+  return makeApiRequest(`entrance-exams/${id}`);
+};
+
+export {
+  registerStudent,
   registerTeacher,
   login,
   getUserProfile,
@@ -202,5 +214,8 @@ export {
   addStudentToClass,
   removeStudentFromClass,
   getClassAnalytics,
-  getUsers
+  getUsers,
+  getEntranceExams,
+  getEntranceExamById,
+  makeApiRequest
 };
