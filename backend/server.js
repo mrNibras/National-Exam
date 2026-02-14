@@ -46,6 +46,7 @@ app.use('/api/classes', require('./classRoutes'));
 app.use('/api/subjects', require('./routes/subjectRoutes'));
 app.use('/api/register', require('./routes/registrationRoutes'));
 app.use('/api/analytics/exam-wise', require('./routes/examAnalyticsRoutes'));
+app.use('/api/entrance-exams', require('./routes/entranceExamRoutes'));
 
 // Start scheduled jobs
 scheduleJobs();
