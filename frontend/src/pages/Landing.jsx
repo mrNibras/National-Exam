@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";
 import { BookOpen, BarChart3, Brain, Users, Target, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+// import heroBg from "@/assets/hero-bg.jpg"; // Temporarily commented out to test
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -34,7 +34,8 @@ const Landing = () => {
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover" />
+          {/* Placeholder div instead of image to avoid potential loading issues */}
+          <div className="w-full h-full bg-gradient-to-br from-primary to-secondary opacity-20"></div>
           <div className="absolute inset-0 gradient-hero opacity-85" />
         </div>
         <div className="container mx-auto px-4 relative z-10 py-24">
@@ -67,9 +68,9 @@ const Landing = () => {
               </Link>
             </motion.div>
             <motion.div custom={4} variants={fadeUp} className="flex flex-wrap gap-6 mt-8 text-primary-foreground/70 text-sm">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> 10,000+ Questions</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> Works Offline</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> Free to Start</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-5 h-5" /> 10,000+ Questions</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-5 h-5" /> Works Offline</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-5 h-5" /> Free to Start</span>
             </motion.div>
           </motion.div>
         </div>

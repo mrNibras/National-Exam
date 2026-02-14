@@ -52,7 +52,7 @@ const App = () => (
               <Leaderboard />
             </ProtectedRoute>
           } />
-          
+
           {/* Teacher Routes */}
           <Route path="/teacher/dashboard" element={
             <ProtectedRoute allowedRoles={['Teacher', 'School Admin', 'Regional Admin']}>
@@ -89,7 +89,7 @@ const App = () => (
               <ManageClass />
             </ProtectedRoute>
           } />
-          
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
