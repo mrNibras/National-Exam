@@ -3,6 +3,27 @@
 ## Issue Description
 The Vercel deployment is failing due to incorrect environment configuration and separation of concerns between frontend and backend.
 
+## ⚠️ CRITICAL FIX: Root Directory Configuration
+
+**If your deployed site shows a plain white page with only text links (no styling):**
+
+This means Vercel is not finding the built frontend files. Fix it by setting the Root Directory:
+
+### Method 1: Vercel Dashboard (Recommended)
+1. Go to your Vercel project dashboard at `vercel.com`
+2. Navigate to **Settings** → **General**
+3. Find **Root Directory** section
+4. Click **Edit** and set it to: `frontend`
+5. Save changes
+6. Redeploy (go to **Deployments** → select latest → click **Redeploy**)
+
+### Method 2: Using vercel.json in frontend directory
+The `frontend/vercel.json` file is already configured correctly. Just ensure:
+- The file is committed to git: `git add frontend/vercel.json && git commit -m "Add Vercel config"`
+- Push to trigger a new deployment
+
+---
+
 ## Solution
 
 ### 1. Separate Deployments
