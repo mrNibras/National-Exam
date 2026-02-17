@@ -1,11 +1,16 @@
 #!/bin/bash
+set -e
+
 cd frontend
 
-# Clean any existing build artifacts
+# Clean build artifacts
 rm -rf dist
+rm -rf node_modules/.vite
 
-# Install dependencies, filtering out deprecated warnings
-npm install 2>&1 | grep -v 'npm warn deprecated' || true
+# Install dependencies
+npm install
 
 # Run build
 npm run build
+
+echo "Build completed successfully"

@@ -1,0 +1,85 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# build output
+dist/
+build/
+frontend/dist/
+backend/dist/
+
+# cache
+.cache/
+*.log
+.nyc_output/
+coverage/
+.nyc_output/
+coverage/
+
+# env
+.env
+.env.local
+.env.development.local
+.env.test.local
+# .env.production.local - allow .env.production for Vercel
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by jest
+coverage/
+
+# Temporary folders
+tmp/
+temp/
+
+# TypeScript
+*.tsbuildinfo
+.next/
+.nuxt/
+dist-server/
+
+# JavaScript bundler specific
+.bundle.js
+*.bundle.js.map
+*.chunk.js
+*.chunk.js.map
+
+# Vite
+.vite/
+
+# ESLint
+.eslintcache
+
+# Dist build for frontend
+frontend/dist/
+.env
+.env.*
+
+# Vercel
+.vercel
