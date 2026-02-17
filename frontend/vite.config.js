@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
             ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'lucide-react'],
             charts: ['recharts'],
             query: ['@tanstack/react-query'],
+            forms: ['react-hook-form', 'zod', '@hookform/resolvers'],
           },
         },
       },
