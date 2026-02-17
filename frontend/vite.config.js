@@ -6,6 +6,19 @@ import path from "path";
 export default defineConfig(({ mode }) => {
   const config = {
     plugins: [react()],
+    build: {
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'lucide-react'],
+            charts: ['recharts'],
+            query: ['@tanstack/react-query'],
+          },
+        },
+      },
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
