@@ -78,3 +78,5 @@ dist-server/
 frontend/dist/
 .env
 .env.*
+.vercel
+.env*.local
