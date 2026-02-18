@@ -11,11 +11,12 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'lucide-react'],
-            charts: ['recharts'],
-            query: ['@tanstack/react-query'],
-            forms: ['react-hook-form', 'zod', '@hookform/resolvers'],
+            'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
+            'router': ['react-router-dom'],
+            'ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'lucide-react'],
+            'charts': ['recharts'],
+            'query': ['@tanstack/react-query'],
+            'forms': ['react-hook-form', 'zod', '@hookform/resolvers'],
           },
         },
       },
@@ -24,6 +25,9 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react/jsx-runtime'],
     },
   };
 
