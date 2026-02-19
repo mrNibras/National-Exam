@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "rm -rf dist node_modules/.vite .vite && npm install && npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm install",
   "github": {
     "silent": false
   },
